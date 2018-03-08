@@ -1867,6 +1867,14 @@ def basicConfig(**kwargs):
             if kwargs:
                 keys = ', '.join(kwargs.keys())
                 raise ValueError('Unrecognised argument(s): %s' % keys)
+        else:
+            root.error("basicConfig will NOT take effect since it's been configured before")
+            if kwargs.get("force"):
+                root.error("removing root handlers and trying again")
+                for handler in root.handlers:
+                    root.removeHandler(handler)
+                    # calling it self again
+                    basicConfig(**kwargs)            
     finally:
         _releaseLock()
 
